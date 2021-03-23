@@ -23,8 +23,8 @@ export default {
   props: {
     hasOverlay: { type: Boolean },
     lg: { type: Boolean },
-    progressMessage: { type: String },
-    message: { type: String },
+    progressMessage: { type: String, default: '' },
+    message: { type: String, default: '' },
   },
   data: () => ({ animatedSpinner }),
 };

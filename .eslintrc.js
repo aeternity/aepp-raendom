@@ -43,6 +43,7 @@ module.exports = {
     'vue-i18n/no-dynamic-keys': 'error',
     'vue-i18n/no-unused-keys': 'error',
     'vue-i18n/no-raw-text': 'error',
+    'vue-i18n/no-missing-keys': process.env.NODE_ENV === 'production' ? 'off' : 'warn',
   },
   overrides: [
     {

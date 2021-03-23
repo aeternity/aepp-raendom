@@ -3,7 +3,7 @@
     class="topic"
     :to="{ name: 'feed-search', params: { query: topic } }"
   >
-    <template>{{ topic }}</template>
+    <span>{{ topic }}</span>
   </RouterLink>
 </template>
 

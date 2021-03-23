@@ -44,8 +44,8 @@ export default {
   },
   props: {
     options: { type: Array, default: null },
-    selected: { type: [String, Number] },
-    method: { type: Function },
+    selected: { type: [String, Number], default: null },
+    method: { type: Function, default: null },
     showRight: { type: Boolean },
   },
   data() {
