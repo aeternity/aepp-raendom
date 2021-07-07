@@ -130,9 +130,6 @@ export default {
         });
         EventBus.$emit('reloadData');
       } catch (error) {
-        if (error.code && error.code === 4) {
-          return;
-        }
         console.error(error);
         this.$store.dispatch('modals/open', {
           name: 'failure',
