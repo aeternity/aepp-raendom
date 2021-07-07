@@ -60,6 +60,7 @@
 
 <script>
 import { mapState } from 'vuex';
+import { fetchJson } from '../../../utils';
 import { EventBus } from '../../../utils/eventBus';
 import Backend from '../../../utils/backend';
 import MessageInput from '../../MessageInput.vue';
@@ -149,14 +150,13 @@ export default {
       const formData = new FormData();
       formData.append('image', event.target.files[0]);
       try {
-        const result = await fetch('https://api.imgur.com/3/image.json', {
+        const { data } = await fetchJson('https://api.imgur.com/3/image.json', {
           method: 'post',
           body: formData,
           headers: {
             Authorization: `Client-ID ${process.env.VUE_APP_IMGUR_API_CLIENT_ID}`,
           },
         });
-        const { data } = await result.json();
         this.media.push({ link: data.link, deletehash: data.deletehash });
       } finally { this.uploadingMedia = false; }
     },

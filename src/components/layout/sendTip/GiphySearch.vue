@@ -38,6 +38,7 @@
 </template>
 
 <script>
+import { fetchJson } from '../../../utils';
 import Loading from '../../Loading.vue';
 import SearchInput from '../SearchInput.vue';
 
@@ -68,8 +69,12 @@ export default {
     },
     async search() {
       try {
-        const results = await fetch(`https://api.giphy.com/v1/gifs/${this.query ? `search?q=${this.query}&` : 'trending?'}api_key=${process.env.VUE_APP_GIPHY_API_KEY}&limit=10&offset=${this.offset}`);
-        const { data, pagination } = await results.json();
+        const url = new URL(`https://api.giphy.com/v1/gifs/${this.query ? 'search' : 'trending'}`);
+        if (this.query) url.searchParams.set('q', this.query);
+        url.searchParams.set('limit', 10);
+        url.searchParams.set('offset', this.offset);
+        url.searchParams.set('api_key', process.env.VUE_APP_GIPHY_API_KEY);
+        const { data, pagination } = await fetchJson(url);
         this.resultsCount = `${pagination.total_count.toLocaleString()} Results`;
         this.results.push(...data.map(({ images }) => ({
           still: images.fixed_width_still.url,

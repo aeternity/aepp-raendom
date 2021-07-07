@@ -11,7 +11,7 @@ import modals from './plugins/modals';
 import backend from './modules/backend';
 import aeternity from './modules/aeternity';
 import Backend from '../utils/backend';
-import { handleUnknownError } from '../utils';
+import { handleUnknownError, fetchJson } from '../utils';
 
 Vue.use(Vuex);
 
@@ -75,8 +75,7 @@ export default new Vuex.Store({
     },
     async initMiddleware({ commit }) {
       const specUrl = `${process.env.VUE_APP_MIDDLEWARE_URL}/swagger/swagger.json`;
-      const res = await fetch(specUrl);
-      const spec = await res.json();
+      const spec = await fetchJson(specUrl);
 
       spec.paths = {
         ...spec.paths,

@@ -64,3 +64,9 @@ export const blockToDate = (goalBlock, height) => {
   const diff = goalBlock - height;
   return new Date(diff * 180000 + Date.now());
 };
+
+export const fetchJson = async (...args) => {
+  const response = await fetch(...args);
+  if (!response.ok) throw new Error(`Request failed with ${response.status}`);
+  return response.json();
+};
