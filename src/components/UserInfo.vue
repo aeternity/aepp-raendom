@@ -340,11 +340,14 @@ export default {
     ...mapActions('backend', ['setCookies']),
     async reloadBalance() {
       await this.$watchUntilTruly(() => this.sdk);
-      this.balance = await this.sdk.balance(this.address).catch(() => 0);
+      this.balance = await this.sdk.balance(this.address).catch((error) => {
+        if (error.status !== 404) throw error;
+        return 0;
+      });
     },
     async resetEditedValues() {
       this.editMode = false;
-      await this.getProfile();
+      await this.reloadProfile();
     },
     async saveProfile() {
       await this.backendAuth('sendProfileData', {
@@ -363,25 +366,22 @@ export default {
       await this.backendAuth('sendProfileData', data);
       await this.resetEditedValues();
     },
-    reloadData() {
-      this.getProfile();
-      Backend.getSenderStats(this.address).then((stats) => {
-        this.userStats = stats;
-      });
+    async reloadData() {
+      await Promise.all([
+        this.reloadProfile(),
+        Backend.getSenderStats(this.address).then((stats) => {
+          this.userStats = stats;
+        }),
+      ]);
     },
-    async getProfile() {
-      Backend.getProfile(this.address)
-        .then((profile) => {
-          if (!profile) {
-            return;
-          }
-          this.profile = profile;
-          this.profile.location = this.profile.location || '';
-          this.profile.biography = this.profile.biography || '';
-          this.profile.coverImage = this.profile.coverImage || '';
-          this.$store.commit('setUserProfile', profile);
-        })
-        .catch(console.error);
+    async reloadProfile() {
+      this.profile = {
+        location: '',
+        biography: '',
+        coverImage: '',
+        ...await Backend.getProfile(this.address),
+      };
+      if (this.address === this.currentAddress) this.$store.commit('setUserProfile', this.profile);
     },
   },
 };

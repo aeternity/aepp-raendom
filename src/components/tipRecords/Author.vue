@@ -27,8 +27,7 @@ export default {
   },
   data: () => ({ popupBound: false, name: null }),
   async mounted() {
-    const profile = await Backend.getProfile(this.address);
-    this.name = profile ? profile.preferredChainName : null;
+    this.name = (await Backend.getProfile(this.address)).preferredChainName;
   },
   methods: {
     async mouseEnterHandler() {

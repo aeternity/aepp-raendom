@@ -115,12 +115,13 @@ export default {
       const amount = shiftDecimalPlaces(this.sendTipForm.amount,
         this.inputToken !== null ? this.tokenInfo[this.inputToken].decimals : 18).toFixed();
 
-      this.$store.dispatch('aeternity/tip', {
-        url: this.sendTipForm.url,
-        title: this.sendTipForm.title,
-        amount,
-        tokenAddress: this.inputToken,
-      }).then(async () => {
+      try {
+        await this.$store.dispatch('aeternity/tip', {
+          url: this.sendTipForm.url,
+          title: this.sendTipForm.title,
+          amount,
+          tokenAddress: this.inputToken,
+        });
         this.clearTipForm();
         this.$store.dispatch('modals/open', {
           name: 'success',
@@ -128,18 +129,19 @@ export default {
           body: this.$t('components.layout.SendTip.SuccessText'),
         });
         EventBus.$emit('reloadData');
-      }).catch((e) => {
-        this.sendingTip = false;
-        if (e.code && e.code === 4) {
+      } catch (error) {
+        if (error.code && error.code === 4) {
           return;
         }
-        console.error(e);
+        console.error(error);
         this.$store.dispatch('modals/open', {
           name: 'failure',
           title: this.$t('components.layout.SendTip.ErrorHeader'),
           body: this.$t('components.layout.SendTip.ErrorText'),
         });
-      });
+      } finally {
+        this.sendingTip = false;
+      }
     },
     clearTipForm() {
       this.sendTipForm = { amount: 0, url: '', title: '' };
