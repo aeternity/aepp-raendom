@@ -15,7 +15,6 @@
 </template>
 
 <script>
-import { handleUnknownError } from '../utils';
 import MessageInput from './MessageInput.vue';
 
 export default {
@@ -43,8 +42,8 @@ export default {
           { text: this.comment, tipId: this.tipId, parentId: this.parentId },
         );
         this.comment = '';
-      } catch (e) {
-        if (e.message !== 'Operation rejected by user') handleUnknownError(e);
+      } catch (error) {
+        if (error.message !== 'Operation rejected by user') throw error;
       } finally {
         this.loading = false;
       }

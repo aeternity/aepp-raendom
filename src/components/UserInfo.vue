@@ -264,7 +264,7 @@ export default {
     joinedAtISO() {
       try {
         return new Date(this.profile.createdAt).toISOString();
-      } catch (e) {
+      } catch {
         return '';
       }
     },
@@ -276,7 +276,7 @@ export default {
             month: 'long',
             day: 'numeric',
           });
-      } catch (e) {
+      } catch {
         return '';
       }
     },
