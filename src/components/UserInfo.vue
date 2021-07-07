@@ -2,7 +2,8 @@
   <div class="user-info">
     <div
       class="profile-section"
-      :style="{ '--cover-image': 'url(' + BACKEND_URL + profile.coverImage + ')' }"
+      :style="profile.coverImage
+        ? { '--cover-image': 'url(' + BACKEND_URL + profile.coverImage + ')' } : {}"
     >
       <div
         class="profile-header"
@@ -620,8 +621,7 @@ input[type="file"] {
 .profile-section {
   background:
     linear-gradient(rgba($light_color, 0.8), rgba($light_color, 0.8)),
-    var(--cover-image),
-    $light_color;
+    var(--cover-image, $light_color);
   background-size: cover;
   background-position: center;
   position: relative;
