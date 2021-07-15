@@ -35,6 +35,7 @@
     "jitsi-iframe-api": "^1.0.0",
     "lodash-es": "^4.17.21",
     "normalize.css": "^8.0.1",
+    "serialize-error": "^8.1.0",
     "sophia-bonding-curve": "github:aeternity/BondingCurve#1.0.0-alpha.2",
     "soundcloud-widget": "^0.2.1",
     "tipping-contract": "github:aeternity/tipping-contract#v5.0.0-alpha1",

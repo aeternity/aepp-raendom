@@ -8,6 +8,7 @@ import mutations from './mutations';
 import getters from './getters';
 import persistState from './plugins/persistState';
 import modals from './plugins/modals';
+import errorHandler from './plugins/errorHandler';
 import backend from './modules/backend';
 import aeternity from './modules/aeternity';
 import Backend from '../utils/backend';
@@ -42,8 +43,11 @@ export default new Vuex.Store({
       commit('setPinnedItems', await Backend.getPinnedItems(address));
     },
     async updateCookiesConsent({ commit, dispatch }) {
-      dispatch('backend/callWithAuth', { method: 'getCookiesConsent' })
-        .then((list) => list.forEach(({ scope, status }) => commit('setCookiesConsent', { scope, status: status === 'ALLOWED' })));
+      const list = await dispatch('backend/callWithAuth', { method: 'getCookiesConsent' });
+      list.forEach(({ scope, status }) => commit('setCookiesConsent', {
+        scope,
+        status: status === 'ALLOWED',
+      }));
     },
     async getTokenBalance({ state: { address, middleware } }, contractAddress) {
       const result = await middleware.getAex9Balance(contractAddress, address);
@@ -145,5 +149,6 @@ export default new Vuex.Store({
       }),
     ),
     modals,
+    errorHandler,
   ],
 });

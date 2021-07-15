@@ -70,8 +70,12 @@ export default {
   },
   methods: {
     async allowHandler() {
-      await this.$store.dispatch('backend/setCookies', { scope: this.scope, status: true });
-      this.resolve();
+      try {
+        await this.$store.dispatch('backend/setCookies', { scope: this.scope, status: true });
+        this.resolve();
+      } catch (error) {
+        if (error.message !== 'Operation rejected by user') throw error;
+      }
     },
   },
 };

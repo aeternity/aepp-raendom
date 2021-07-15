@@ -31,7 +31,7 @@ export const validateTipUrl = (urlAsString) => {
   try {
     const url = toURL(urlAsString);
     return ['http:', 'https:'].includes(url.protocol) && isFQDN(url.hostname);
-  } catch (e) {
+  } catch {
     return false;
   }
 };

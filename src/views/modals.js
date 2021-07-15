@@ -7,6 +7,8 @@ import FeedItemMenu from '../components/FeedItemMenu.vue';
 import TokenSelect from '../components/TokenSelect.vue';
 import TipInputPopup from '../components/TipInputPopup.vue';
 import CookiesDialog from '../components/CookiesDialog.vue';
+import ErrorReportModal from '../components/ErrorReportModal.vue';
+import ErrorReportSubmittedModal from '../components/ErrorReportSubmittedModal.vue';
 
 export default () => {
   registerModal({ name: 'success', component: AlertModal, allowRedirect: true });
@@ -47,5 +49,15 @@ export default () => {
     name: 'cookies-dialog',
     component: CookiesDialog,
     resolveNullOnRedirect: true,
+  });
+  registerModal({
+    name: 'error-report-modal',
+    component: ErrorReportModal,
+    allowRedirect: true,
+  });
+  registerModal({
+    name: 'error-report-submitted-modal',
+    component: ErrorReportSubmittedModal,
+    allowRedirect: true,
   });
 };

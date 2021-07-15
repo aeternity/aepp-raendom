@@ -579,5 +579,21 @@
     "MenuLink": "菜单",
     "Placeholder": "名称",
     "Start": "开始"
+  },
+  "reportBug": {
+    "Title": "Unhandled error",
+    "SubTitle": "Would you like to submit a bug report?",
+    "TechnicalDetails": "Technical details",
+    "Description": "We have encountered an error while loading this page. Be a fellow superhero and help us improve our service by sending us a bug report. Only technical details and no personal data will be submitted.",
+    "DescriptionTitle": "Bug description",
+    "Send": "Submit",
+    "Cancel": "Cancel",
+    "Placeholder": "Describe the bug you encountered (optional)",
+    "Success": {
+      "Title": "Thank you!",
+      "SubTitle": "Your bug report has been submitted.",
+      "Description": "Thank you for being such a wonderful fellow superhero. The information provided will help us to improve our product and services for the benefit of the whole Superhero community.",
+      "Return": "Return to website"
+    }
   }
 }

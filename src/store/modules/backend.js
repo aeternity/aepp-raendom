@@ -135,8 +135,7 @@ export default {
       const { challenge } = await Backend[method](address, arg);
       if (useSdkWallet) {
         const signature = await sdk.signMessage(challenge);
-        const response = await Backend[method](address, { challenge, signature });
-        return response;
+        return Backend[method](address, { challenge, signature });
       }
 
       const url = new URL(to || window.location, window.location);

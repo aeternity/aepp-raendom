@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Generator: Adobe Illustrator 25.2.1, SVG Export Plug-In . SVG Version: 6.00 Build 0)  -->
+<svg version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
+	 viewBox="0 0 48 48" style="enable-background:new 0 0 48 48;" xml:space="preserve">
+<style type="text/css">
+	.st0{fill:none;}
+	.st1{fill-rule:evenodd;clip-rule:evenodd;fill:#FF4746;}
+	.st2{opacity:0.44;fill:#FF4746;enable-background:new;}
+</style>
+<g id="transparent">
+	<rect x="0" y="0" class="st0" width="48" height="48"/>
+</g>
+<g id="brackets">
+	<path class="st1" d="M14.337,15.404c0.731,0.688,0.766,1.839,0.078,2.57l-6.1,6.481l6.1,6.481c0.688,0.731,0.653,1.882-0.078,2.57
+		c-0.731,0.688-1.882,0.653-2.57-0.078l-7.273-7.727c-0.659-0.7-0.659-1.792,0-2.492l7.273-7.727
+		C12.455,14.751,13.606,14.716,14.337,15.404z M33.663,15.404c-0.731,0.688-0.766,1.839-0.078,2.57l6.1,6.481l-6.1,6.481
+		c-0.688,0.731-0.653,1.882,0.078,2.57c0.731,0.688,1.882,0.653,2.57-0.078l7.273-7.727c0.659-0.7,0.659-1.792,0-2.492l-7.273-7.727
+		C35.545,14.751,34.394,14.716,33.663,15.404z"/>
+</g>
+<g id="blinking">
+	<path class="st2" d="M27.765,9.951L27.765,9.951c0.97,0.26,1.546,1.257,1.286,2.227l-6.588,24.587
+		c-0.26,0.97-1.257,1.546-2.227,1.286l0,0c-0.97-0.26-1.546-1.257-1.286-2.227l6.588-24.587
+		C25.798,10.266,26.795,9.691,27.765,9.951z"/>
+		<animate attributeName="opacity"
+             values=".56;1;.56" dur="1.3s"
+             repeatCount="indefinite"/>
+</g>
+</svg>

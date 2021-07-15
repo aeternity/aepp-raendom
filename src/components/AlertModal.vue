@@ -1,108 +1,54 @@
 <template>
-  <div
-    class="modal-mask"
-    @click="resolve"
+  <Dialog
+    class="alert-modal"
+    :title="title"
+    @close="resolve"
   >
-    <div class="modal-wrapper">
-      <div class="success-modal">
-        <img
-          v-if="!hideIcon"
-          :src="failure ? FailureIcon : SuccessIcon"
-        >
-        <h1>{{ title }}</h1>
-        <p
-          v-for="(row, index) in body instanceof Array ? body : [body]"
-          :key="index"
-        >
-          {{ row }}
-        </p>
-        <button
-          class="button"
-          @click="resolve"
-        >
-          {{ primaryButtonText }}
-        </button>
-      </div>
-    </div>
-  </div>
+    <img
+      v-if="!hideIcon"
+      slot="icon"
+      :src="failure ? FailureIcon : SuccessIcon"
+    >
+    <p
+      v-for="(row, index) in body instanceof Array ? body : [body]"
+      :key="index"
+    >
+      {{ row }}
+    </p>
+    <AeButton @click="resolve">
+      {{ primaryButtonText }}
+    </AeButton>
+  </Dialog>
 </template>
 
 <script>
 import SuccessIcon from '../assets/verifiedUrl.svg';
 import FailureIcon from '../assets/iconError.svg';
+import Dialog from './Dialog.vue';
+import AeButton from './AeButton.vue';
 
 export default {
+  components: { Dialog, AeButton },
   props: {
     title: { type: String, required: true },
     body: { type: [String, Array], required: true },
     resolve: { type: Function, required: true },
-    failure: { type: Boolean },
-    hideIcon: { type: Boolean },
+    failure: Boolean,
+    hideIcon: Boolean,
     primaryButtonText: {
       type: String,
       default() { return this.$t('done'); },
     },
   },
-  data() {
-    return {
-      SuccessIcon,
-      FailureIcon,
-    };
-  },
+  data: () => ({
+    SuccessIcon,
+    FailureIcon,
+  }),
 };
 </script>
 
 <style lang="scss" scoped>
-.modal-mask {
-  vertical-align: middle;
-  padding-top: 5rem;
-  position: fixed;
-  z-index: 9998;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  display: table;
-  background-color: rgba(0, 0, 0, 0.5);
-
-  .success-modal {
-    text-align: center;
-    width: 25rem;
-    margin: 0 auto;
-    padding: 2.5rem 2.5rem;
-    background-color: $actions_ribbon_background_color;
-    border-radius: 0.25rem;
-    border: 1px solid $card_border_color;
-    box-shadow: 4px 4px 8px rgba(0, 0, 0, 0.25);
-    word-break: break-word;
-
-    @include smallest {
-      width: 100%;
-      padding: 1rem;
-    }
-
-    img {
-      height: 2rem;
-      margin-bottom: 0.85rem;
-    }
-
-    h1 {
-      color: $standard_font_color;
-      font-size: 1rem;
-      font-weight: 500;
-    }
-
-    .button {
-      background-color: $secondary_color;
-      border: none;
-      border-radius: 0.25rem;
-      color: $standard_font_color;
-      font-size: 0.75rem;
-      font-weight: 700;
-      justify-self: center;
-      line-height: 1.125;
-      padding: 0.65rem 1rem;
-    }
-  }
+.alert-modal {
+  word-break: break-word; // TODO: move it to case where it is actually used
 }
 </style>

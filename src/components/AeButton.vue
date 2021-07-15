@@ -49,6 +49,7 @@ export default {
   transition: background-color 0.3s;
   text-align: center;
   font-size: 16px;
+  cursor: pointer;
 
   &[disabled] {
     opacity: 0.4;

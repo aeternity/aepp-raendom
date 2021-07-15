@@ -95,7 +95,11 @@ export default {
         console.log('found wallet');
         this.useSdkWallet();
         this.setAddress(address);
-        this.$store.dispatch('updateCookiesConsent');
+        try {
+          await this.$store.dispatch('updateCookiesConsent');
+        } catch (error) {
+          if (error.message !== 'Operation rejected by user') throw error;
+        }
       } else {
         this.setAddress(address);
       }
