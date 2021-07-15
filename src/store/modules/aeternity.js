@@ -339,7 +339,9 @@ export default {
       }
 
       await contractV1.methods.tip(url, title, { amount });
-      return dispatch('backend/awaitTip', null, { root: true });
+      return dispatch('backend/awaitTip', null, { root: true })
+        // TODO: remove after solving https://github.com/aeternity/tipping-community-backend/issues/371
+        .catch(console.error);
     },
     async retip({
       dispatch,
@@ -366,7 +368,9 @@ export default {
 
       if (contractAddress === process.env.VUE_APP_CONTRACT_V1_ADDRESS) {
         await contractV1.methods.retip(Number(id.split('_')[0]), { amount });
-        return dispatch('backend/awaitRetip', null, { root: true });
+        return dispatch('backend/awaitRetip', null, { root: true })
+          // TODO: remove after solving https://github.com/aeternity/tipping-community-backend/issues/371
+          .catch(console.error);
       }
 
       if (contractAddress === process.env.VUE_APP_CONTRACT_V2_ADDRESS) {
