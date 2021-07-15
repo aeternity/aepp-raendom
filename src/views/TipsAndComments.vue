@@ -120,7 +120,7 @@ export default {
           ? 'backend/reloadComment' : 'backend/reloadTip', this.id || this.tipId);
       } catch (error) {
         this.error = true;
-        throw error;
+        console.error(error);
       } finally {
         this.showLoading = false;
       }

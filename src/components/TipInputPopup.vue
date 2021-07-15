@@ -130,7 +130,7 @@ export default {
         this.resolve(true);
       } catch (error) {
         this.error = true;
-        throw error;
+        console.error(error);
       } finally {
         this.showLoading = false;
       }

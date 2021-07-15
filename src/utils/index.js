@@ -31,7 +31,7 @@ export const validateTipUrl = (urlAsString) => {
   try {
     const url = toURL(urlAsString);
     return ['http:', 'https:'].includes(url.protocol) && isFQDN(url.hostname);
-  } catch (e) {
+  } catch {
     return false;
   }
 };
@@ -63,4 +63,10 @@ export const handleUnknownError = (error) => console.warn('Unknown rejection', e
 export const blockToDate = (goalBlock, height) => {
   const diff = goalBlock - height;
   return new Date(diff * 180000 + Date.now());
+};
+
+export const fetchJson = async (...args) => {
+  const response = await fetch(...args);
+  if (!response.ok) throw new Error(`Request failed with ${response.status}`);
+  return response.json();
 };

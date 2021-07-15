@@ -11,7 +11,7 @@ import modals from './plugins/modals';
 import backend from './modules/backend';
 import aeternity from './modules/aeternity';
 import Backend from '../utils/backend';
-import { handleUnknownError } from '../utils';
+import { fetchJson } from '../utils';
 
 Vue.use(Vuex);
 
@@ -51,13 +51,7 @@ export default new Vuex.Store({
     },
     async updateTokensBalanceAndPrice({ state: { address, middleware }, commit, dispatch }) {
       const tokens = await Backend.getTokenBalances(address);
-      let knownTokens;
-      try {
-        knownTokens = (await Backend.getWordRegistry()).map((item) => item.tokenAddress);
-      } catch (error) {
-        handleUnknownError(error);
-        return;
-      }
+      const knownTokens = (await Backend.getWordRegistry()).map((item) => item.tokenAddress);
       if (!middleware) await dispatch('initMiddleware');
       await Promise.all(Object.entries(tokens).map(async ([token]) => {
         commit('addTokenBalance', {
@@ -67,16 +61,14 @@ export default new Vuex.Store({
         if (knownTokens.includes(token)) {
           commit('addTokenPrice', {
             token,
-            price: await Backend.getWordSaleDetailsByToken(token)
-              .then((s) => s.buyPrice).catch(() => null),
+            price: await Backend.getWordSaleDetailsByToken(token).then((s) => s.buyPrice),
           });
         }
       }));
     },
     async initMiddleware({ commit }) {
       const specUrl = `${process.env.VUE_APP_MIDDLEWARE_URL}/swagger/swagger.json`;
-      const res = await fetch(specUrl);
-      const spec = await res.json();
+      const spec = await fetchJson(specUrl);
 
       spec.paths = {
         ...spec.paths,
@@ -115,7 +107,10 @@ export default new Vuex.Store({
         dispatch('updatePinnedItems'),
         dispatch('updateUserProfile'),
         (async () => {
-          const balance = await sdk.balance(address).catch(() => 0);
+          const balance = await sdk.balance(address).catch((error) => {
+            if (error.status !== 404) throw error;
+            return 0;
+          });
           commit('updateBalance', balance);
         })(),
         dispatch('updateTokensBalanceAndPrice'),

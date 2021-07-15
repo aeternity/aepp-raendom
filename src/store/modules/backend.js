@@ -86,8 +86,6 @@ export default {
         Backend.getTipById(id),
         Backend.getTipComments(id),
       ]);
-      // TODO: Remove after backend methods start to throw exceptions on not found
-      if (!tip) throw new Error(`Can't find tip with id: ${id}`);
       commit('setTip', {
         id,
         value: {
@@ -101,8 +99,6 @@ export default {
     },
     async reloadComment({ commit }, id) {
       const value = await Backend.getCommentById(id);
-      // TODO: Remove after backend methods start to throw exceptions on not found
-      if (!value) throw new Error(`Can't find comment with id: ${id}`);
       commit('setComment', { id, value });
     },
     async awaitTip(_, id) {
@@ -120,7 +116,7 @@ export default {
       commit('setStats', { ...stats1, ...stats2, height });
     },
     async reloadPrices({ commit }) {
-      commit('setPrices', (await Backend.getPrice())?.aeternity);
+      commit('setPrices', (await Backend.getPrice()).aeternity);
     },
     // eslint-disable-next-line consistent-return
     async callWithAuth({

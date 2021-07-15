@@ -1,28 +1,8 @@
-export const wrapTry = async (promise) => {
-  try {
-    return promise.then((res) => {
-      if (!res) {
-        console.error(new Error('Response is undefined'));
-        return null;
-      }
-      if (!res.ok) throw new Error(`Request failed with ${res.status}`);
-      return res.json();
-    }).catch((error) => {
-      console.error(error);
-      return null;
-    });
-  } catch (error) {
-    console.error(error);
-    return null;
-  }
-};
+import { fetchJson } from '.';
 
-const backendFetch = (path, ...args) => wrapTry(
-  fetch(`${process.env.VUE_APP_BACKEND_URL}/${path}`, ...args).catch((err) => console.error(err)),
+const backendFetch = (path, ...args) => fetchJson(
+  `${process.env.VUE_APP_BACKEND_URL}/${path}`, ...args,
 );
-
-const backendFetchNoTimeout = (path, ...args) => fetch(`${process.env.VUE_APP_BACKEND_URL}/${path}`, ...args)
-  .catch((err) => console.error(err));
 
 export default class Backend {
   static getTipComments = async (tipId) => backendFetch(`comment/api/tip/${encodeURIComponent(tipId)}`);
@@ -108,7 +88,7 @@ export default class Backend {
     return backendFetch(`tips${query}`);
   };
 
-  static addToken = async (address) => backendFetchNoTimeout('tokenCache/addToken', {
+  static addToken = async (address) => backendFetch('tokenCache/addToken', {
     method: 'post',
     body: JSON.stringify({ address }),
     headers: { 'Content-Type': 'application/json' },
@@ -129,7 +109,8 @@ export default class Backend {
     if (ordering) queryParams.set('ordering', ordering);
     if (direction) queryParams.set('direction', direction);
     if (search) queryParams.set('search', search);
-    return process.env.VUE_APP_CONTRACT_V2_ADDRESS ? backendFetch(`tokenCache/wordRegistry?${queryParams.toString()}`) : Promise.resolve({});
+    return process.env.VUE_APP_CONTRACT_V2_ADDRESS
+      ? backendFetch(`tokenCache/wordRegistry?${queryParams.toString()}`) : Promise.resolve([]);
   }
 
   static getWordSaleVotesDetails = async (address) => backendFetch(`tokenCache/wordSaleVotesDetails/${address}`);

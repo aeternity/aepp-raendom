@@ -85,12 +85,13 @@ export default {
           body: this.$t('components.tipRecords.TipRecord.claimBodySuccess'),
         });
         this.resolve();
-      } catch (e) {
+      } catch (error) {
         await this.$store.dispatch('modals/open', {
           name: 'failure',
           title: this.$t('components.tipRecords.TipRecord.claimTitle'),
           body: this.$t('components.tipRecords.TipRecord.claimBodyFailure'),
         });
+        console.error(error);
       }
     },
     async pinOrUnPinTip() {

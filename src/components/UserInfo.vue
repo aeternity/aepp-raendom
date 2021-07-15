@@ -1,17 +1,25 @@
 <template>
-  <div class="user-info">
+  <Spinner
+    v-if="!profile"
+    class="user-info"
+  />
+  <div
+    v-else
+    class="user-info"
+  >
     <div
       class="profile-section"
-      :style="{ '--cover-image': 'url(' + BACKEND_URL + profile.coverImage + ')' }"
+      :style="profile.coverImage
+        ? { '--cover-image': 'url(' + BACKEND_URL + profile.coverImage + ')' } : {}"
     >
       <div
         class="profile-header"
-        :class="{ 'profile-editable': backendAuth && currentAddress === address }"
+        :class="{ 'profile-editable': backendAuth && isOwn }"
       >
         <div class="profile-image">
           <Avatar :address="address" />
           <TipInput
-            v-if="currentAddress !== address"
+            v-if="!isOwn"
             :user-address="address"
             class="profile-button avatar-button"
           />
@@ -44,7 +52,7 @@
             :href="explorerTransactionsUrl"
           >
             <div class="chain">
-              {{ userChainName ? userChainName : $t('FellowSuperhero') }}
+              {{ profile.preferredChainName || $t('FellowSuperhero') }}
             </div>
             <div class="text-ellipsis">{{ address }}</div>
           </a>
@@ -57,7 +65,7 @@
           <div class="profile-row">
             <div class="location">
               <img
-                v-if="profile.location.length || currentAddress === address"
+                v-if="profile.location || isOwn"
                 src="../assets/location.svg"
               >
               <input
@@ -67,16 +75,12 @@
                 type="text"
                 :placeholder="$t('views.UserProfileView.LocationPlaceholder')"
               >
-              <span v-if="!editMode && (profile.location.length || currentAddress === address)">
-                {{
-                  profile.location.length
-                    ? profile.location
-                    : $t('views.UserProfileView.Location')
-                }}
+              <span v-if="!editMode && (profile.location || isOwn)">
+                {{ profile.location || $t('views.UserProfileView.Location') }}
               </span>
             </div>
             <div
-              v-if="userStats && hasCreationDate"
+              v-if="profile.createdAt"
               class="joined"
             >
               <span>{{ $t('views.UserProfileView.Joined') }}</span>
@@ -85,7 +89,7 @@
           </div>
         </div>
         <div
-          v-if="backendAuth && currentAddress === address"
+          v-if="backendAuth && isOwn"
           class="edit-buttons"
         >
           <label
@@ -177,7 +181,10 @@
         </div>
       </div>
     </div>
-    <div class="profile-stats">
+    <div
+      v-if="userStats"
+      class="profile-stats"
+    >
       <div
         v-for="(divClass, index) in ['tip_stats', 'stats']"
         :key="index"
@@ -212,6 +219,7 @@
 <script>
 import { mapState, mapActions } from 'vuex';
 import Backend from '../utils/backend';
+import Spinner from './Loader.vue';
 import AeAmountFiat from './AeAmountFiat.vue';
 import Avatar from './Avatar.vue';
 import { EventBus } from '../utils/eventBus';
@@ -223,6 +231,7 @@ import IconCancel from '../assets/iconCancel.svg?icon-component';
 
 export default {
   components: {
+    Spinner,
     AeAmountFiat,
     Avatar,
     TipInput,
@@ -237,23 +246,9 @@ export default {
   data() {
     return {
       maxLength: 250,
-      userStats: {
-        tipsLength: '-',
-        retipsLength: '-',
-        totalTipAmount: '0',
-        claimedUrlsLength: '-',
-        unclaimedAmount: '0',
-        claimedAmount: '0',
-        userComments: '-',
-      },
+      userStats: null,
       editMode: false,
-      userCommentCount: 0,
-      profile: {
-        biography: '',
-        createdAt: '',
-        location: '',
-        coverImage: '',
-      },
+      profile: null,
       balance: '',
       BACKEND_URL: process.env.VUE_APP_BACKEND_URL,
     };
@@ -261,17 +256,15 @@ export default {
   computed: {
     ...mapState(['cookiesConsent', 'chainNames']),
     ...mapState('aeternity', ['sdk']),
-    ...mapState({ currentAddress: 'address' }),
-    userChainName() {
-      return this.profile.preferredChainName;
-    },
-    hasCreationDate() {
-      return this.profile.createdAt.length > 0;
-    },
+    ...mapState({
+      isOwn({ address }) {
+        return this.address === address;
+      },
+    }),
     joinedAtISO() {
       try {
         return new Date(this.profile.createdAt).toISOString();
-      } catch (e) {
+      } catch {
         return '';
       }
     },
@@ -283,7 +276,7 @@ export default {
             month: 'long',
             day: 'numeric',
           });
-      } catch (e) {
+      } catch {
         return '';
       }
     },
@@ -291,28 +284,25 @@ export default {
       return `${this.profile.biography.length}/${this.maxLength}`;
     },
     tipStats() {
-      return [
-        {
-          value: this.userStats.totalTipsLength,
-          title: this.$t('views.UserProfileView.TipsSent'),
-          amount: this.userStats.totalAmount,
-        },
-        {
-          value: this.userStats.urlStats?.totaltipslength,
-          title: this.$t('views.UserProfileView.TipsReceived'),
-          amount: this.userStats.urlStats?.totalAmount,
-        },
-      ];
+      return [{
+        value: this.userStats.totalTipsLength ?? 0,
+        title: this.$t('views.UserProfileView.TipsSent'),
+        amount: this.userStats.totalamount ?? '0',
+      }, {
+        value: this.userStats.urlStats.totalTipsLength,
+        title: this.$t('views.UserProfileView.TipsReceived'),
+        amount: this.userStats.urlStats.totalAmount,
+      }];
     },
     showedStats() {
-      return [
-        { value: this.userStats.commentCount, title: this.$t('views.UserProfileView.Comments') },
-        {
-          value: this.userStats.claimedUrlsLength,
-          image: SuccessIcon,
-          title: this.$t('views.UserProfileView.ClaimedUrls'),
-        },
-      ];
+      return [{
+        value: this.userStats.commentCount,
+        title: this.$t('views.UserProfileView.Comments'),
+      }, {
+        value: this.userStats.claimedUrlsLength,
+        image: SuccessIcon,
+        title: this.$t('views.UserProfileView.ClaimedUrls'),
+      }];
     },
     explorerTransactionsUrl() {
       return `${process.env.VUE_APP_EXPLORER_URL}/account/transactions/${this.address}`;
@@ -321,10 +311,7 @@ export default {
   mounted() {
     this.$watch(
       () => this.address,
-      () => {
-        this.reloadData();
-        this.reloadBalance();
-      },
+      () => this.reloadData(),
       { immediate: true },
     );
 
@@ -337,13 +324,9 @@ export default {
   },
   methods: {
     ...mapActions('backend', ['setCookies']),
-    async reloadBalance() {
-      await this.$watchUntilTruly(() => this.sdk);
-      this.balance = await this.sdk.balance(this.address).catch(() => 0);
-    },
     async resetEditedValues() {
       this.editMode = false;
-      await this.getProfile();
+      await this.reloadProfile();
     },
     async saveProfile() {
       await this.backendAuth('sendProfileData', {
@@ -362,25 +345,25 @@ export default {
       await this.backendAuth('sendProfileData', data);
       await this.resetEditedValues();
     },
-    reloadData() {
-      this.getProfile();
-      Backend.getSenderStats(this.address).then((stats) => {
-        this.userStats = stats;
-      });
+    async reloadData() {
+      await Promise.all([
+        this.reloadProfile(),
+        Backend.getSenderStats(this.address).then((stats) => {
+          this.userStats = stats;
+        }),
+        (async () => {
+          await this.$watchUntilTruly(() => this.sdk);
+          this.balance = await this.sdk.balance(this.address).catch((error) => {
+            if (error.status !== 404) throw error;
+            return 0;
+          });
+        })(),
+      ]);
     },
-    async getProfile() {
-      Backend.getProfile(this.address)
-        .then((profile) => {
-          if (!profile) {
-            return;
-          }
-          this.profile = profile;
-          this.profile.location = this.profile.location || '';
-          this.profile.biography = this.profile.biography || '';
-          this.profile.coverImage = this.profile.coverImage || '';
-          this.$store.commit('setUserProfile', profile);
-        })
-        .catch(console.error);
+    async reloadProfile() {
+      this.profile = await Backend.getProfile(this.address);
+      this.profile.biography = this.profile.biography || '';
+      if (this.isOwn) this.$store.commit('setUserProfile', this.profile);
     },
   },
 };
@@ -620,8 +603,7 @@ input[type="file"] {
 .profile-section {
   background:
     linear-gradient(rgba($light_color, 0.8), rgba($light_color, 0.8)),
-    var(--cover-image),
-    $light_color;
+    var(--cover-image, $light_color);
   background-size: cover;
   background-position: center;
   position: relative;
